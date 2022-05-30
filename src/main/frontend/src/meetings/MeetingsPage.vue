@@ -22,6 +22,14 @@
     import MeetingsList from "./MeetingsList";
 
     export default {
+        mounted() {
+            this.$http.get('meetings')
+            .then((response) => {
+                console.log('Pobrano meetingi z powodzeniem');
+                this.meetings = response.data;
+            })
+            .catch(response => console.log('Błąd przy pobieraniu meetingów. Kod odpowiedzi: ' + response.status));
+        },
         components: {NewMeetingForm, MeetingsList},
         props: ['username'],
         data() {
@@ -32,6 +40,11 @@
         methods: {
             addNewMeeting(meeting) {
                 this.meetings.push(meeting);
+                this.$http.post('meetings', meeting)
+                    .then(() => {
+                        console.log('Meeting ' + meeting + ' założony z powodzeniem.');
+                    })
+                    .catch(response => console.log('Błąd przy tworzeniu spotkania. Kod odpowiedzi: ' + response.status));
             },
             addMeetingParticipant(meeting) {
                 meeting.participants.push(this.username);
