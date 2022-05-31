@@ -27,6 +27,7 @@
             .then((response) => {
                 console.log('Pobrano meetingi z powodzeniem');
                 this.meetings = response.data;
+                console.log(JSON.stringify(this.meetings));
             })
             .catch(response => console.log('Błąd przy pobieraniu meetingów. Kod odpowiedzi: ' + response.status));
         },
@@ -61,7 +62,6 @@
                 this.$http.post('meetings/'+ meeting.id +'/participants', {login:this.username})
                      .then(response => {
                          console.log("zapisano");
-                          this.fetchMeetings()
                      })
                      .catch(response => {
                           console.log("nie zapisano");
@@ -72,6 +72,13 @@
             },
             deleteMeeting(meeting) {
                 this.meetings.splice(this.meetings.indexOf(meeting), 1);
+                this.$http.delete('meetings/'+ meeting.id)
+                .then(response => {
+                console.log("usunieto");
+                })
+                .catch(response=>{
+                console.log("nie usunieto");
+                });
             }
         }
     }

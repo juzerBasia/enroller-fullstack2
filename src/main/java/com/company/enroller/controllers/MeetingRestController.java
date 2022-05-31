@@ -79,6 +79,14 @@ public class MeetingRestController {
         return new ResponseEntity<Collection<Participant>>(currentMeeting.getParticipants(), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMeeting(@PathVariable("id") long id) {
+        System.out.println("I am deleteing meeting with ID: " + id);
+        Meeting meeting = meetingService.findById(id);
+        meetingService.delete(meeting);
+        return new ResponseEntity<Meeting>(meeting, HttpStatus.NO_CONTENT);
+    }
+
     @RequestMapping(value = "{id}/participants/{login}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeParticipant(@PathVariable("id") long id, @PathVariable("login") String login) {
         Meeting meeting = meetingService.findById(id);
