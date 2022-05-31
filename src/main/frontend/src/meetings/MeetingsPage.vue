@@ -34,8 +34,18 @@
         props: ['username'],
         data() {
             return {
-                meetings: []
+                meetings_data: []
             };
+        },
+        computed: {
+            meetings: {
+                get() {
+                    return this.meetings_data;
+                },
+                set(meetings) {
+                    this.meetings_data = meetings;
+                }
+            }
         },
         methods: {
             addNewMeeting(meeting) {
@@ -48,6 +58,14 @@
             },
             addMeetingParticipant(meeting) {
                 meeting.participants.push(this.username);
+                this.$http.post('meetings/'+ meeting.id +'/participants', {login:this.username})
+                     .then(response => {
+                         console.log("zapisano");
+                          this.fetchMeetings()
+                     })
+                     .catch(response => {
+                          console.log("nie zapisano");
+                     });
             },
             removeMeetingParticipant(meeting) {
                 meeting.participants.splice(meeting.participants.indexOf(this.username), 1);

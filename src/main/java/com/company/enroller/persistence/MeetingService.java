@@ -23,7 +23,7 @@ public class MeetingService {
         return query.list();
     }
 
-    public Meeting findById(Long id) {
+    public Meeting findById(long id) {
         return (Meeting) connector.getSession().get(Meeting.class, id);
     }
 
@@ -32,6 +32,12 @@ public class MeetingService {
         connector.getSession().save(meeting);
         transaction.commit();
         return meeting;
+    }
+
+    public void update(Meeting meeting) {
+        Transaction transaction = connector.getSession().beginTransaction();
+        connector.getSession().merge(meeting);
+        transaction.commit();
     }
 
 
