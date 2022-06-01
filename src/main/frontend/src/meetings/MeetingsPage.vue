@@ -64,6 +64,7 @@
                 this.$http.post('meetings', meeting)
                     .then(() => {
                         console.log('Meeting ' + meeting + ' założony z powodzeniem.');
+                        this.fetchMeetings();
                     })
                     .catch(response => console.log('Błąd przy tworzeniu spotkania. Kod odpowiedzi: ' + response.status));
             },
