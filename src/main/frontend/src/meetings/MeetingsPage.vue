@@ -22,84 +22,62 @@
     import MeetingsList from "./MeetingsList";
 
     export default {
-        mounted() {
-            this.$http.get('meetings')
-            .then((response) => {
-                console.log('Pobrano meetingi z powodzeniem');
-                this.meetings = response.data;
-                console.log(JSON.stringify(this.meetings));
-            })
-            .catch(response => console.log('Błąd przy pobieraniu meetingów. Kod odpowiedzi: ' + response.status));
-        },
+
         components: {NewMeetingForm, MeetingsList},
         props: ['username'],
         data() {
             return {
-                meetings_data: []
+                meetings: []
             };
         },
-        computed: {
-            meetings: {
-                get() {
-                    return this.meetings_data;
-                },
-                set(meetings) {
-                    this.meetings_data = meetings;
-                }
-            }
-        },
         methods: {
-            fetchMeetings(){
-                this.$http.get('meetings')
-                     .then(response => {
-                         this.meetings = response.body;
-                     })
-                     .catch(response => {
-                          console.log("nie powiodlo sie");
-                     });
+            addNewMeeting(meeting) {
+                this.$http.post('meetings', meeting)
+                    .then(response => {
+                        console.log(response);
+                        this.reloadMeetings();
+                    })
+                    .catch(err => console.log("error:" + err));
 
             },
-            addNewMeeting(meeting) {
-                this.meetings.push(meeting);
-                this.$http.post('meetings', meeting)
-                    .then(() => {
-                        console.log('Meeting ' + meeting + ' założony z powodzeniem.');
-                        this.fetchMeetings();
-                    })
-                    .catch(response => console.log('Błąd przy tworzeniu spotkania. Kod odpowiedzi: ' + response.status));
-            },
             addMeetingParticipant(meeting) {
-                meeting.participants.push(this.username);
-                this.$http.post('meetings/'+ meeting.id +'/participants', {login:this.username})
-                     .then(response => {
-                         console.log("zapisano");
-                         this.fetchMeetings();
-                     })
-                     .catch(response => {
-                          console.log("nie zapisano");
-                     });
+
+                this.$http.post('meetings/' + meeting.id +'/participants?username=' + this.username)
+                    .then((response) => {
+                        console.log(response);
+                        this.reloadMeetings();
+                    })
+                    .catch(err => console.log("error" + err))
+
             },
             removeMeetingParticipant(meeting) {
-                meeting.participants.splice(meeting.participants.indexOf(this.username), 1);
-                this.$http.delete('meetings/'+ meeting.id + '/participants/' + this.username)
-                     .then(response => {
-                         console.log("usunieto");
-                          this.fetchMeetings()
-                     })
-                     .catch(response => {
-                          console.log("nie usunieto");
-                     });
+                this.$http.delete('meetings/' + meeting.id +'/participants?username=' + this.username)
+                    .then((response) => {
+                        console.log(response);
+                        this.reloadMeetings();
+                    })
+                    .catch(err => console.log("error" + err))
             },
             deleteMeeting(meeting) {
-                this.meetings.splice(this.meetings.indexOf(meeting), 1);
-                this.$http.delete('meetings/'+ meeting.id)
-                .then(response => {
-                console.log("usunieto");
-                })
-                .catch(response=>{
-                console.log("nie usunieto");
-                });
+
+                this.$http.delete('meetings/' + meeting.id)
+                    .then((response) => {
+                        console.log(response);
+                        this.reloadMeetings();
+                    })
+                    .catch(err => console.log("error" + err))
+            },
+            reloadMeetings() {
+                this.$http.get('meetings')
+                    .then(response => {
+                        console.log(response);
+                        this.meetings = response.body;
+                    })
+                    .catch(err => console.log("error" + err))
             }
+        },
+        mounted() {
+            this.reloadMeetings();
         }
     }
 </script>

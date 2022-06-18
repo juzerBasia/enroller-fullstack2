@@ -1,6 +1,7 @@
 package com.company.enroller.persistence;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class DatabaseConnector {
 
@@ -23,6 +24,14 @@ public class DatabaseConnector {
         session.close();
         HibernateUtil.shutdown();
         instance = null;
+    }
+
+    public <T> void update(T t) {
+
+        Transaction transaction = instance.getSession().beginTransaction();
+        instance.getSession().update(t);
+        transaction.commit();
+
     }
 
     public Session getSession() {

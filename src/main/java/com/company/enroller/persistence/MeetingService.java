@@ -46,5 +46,11 @@ public class MeetingService {
         transaction.commit();
     }
 
+    public void addParticipant(Meeting meeting, Participant participant) {
+
+        meeting.addParticipant(participant);
+        connector.update(meeting);
+
+    }
 
 }
